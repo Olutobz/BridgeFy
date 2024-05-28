@@ -1,16 +1,18 @@
 package com.dev.olutoba.bridgefy
 
 import android.annotation.SuppressLint
-import android.net.Uri
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.KeyEvent
 import android.webkit.PermissionRequest
-import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.dev.olutoba.bridgefy.databinding.ActivityMainBinding
 
@@ -49,16 +51,55 @@ class MainActivity : AppCompatActivity() {
         }
 
         webView.webChromeClient = object : WebChromeClient() {
-            override fun onPermissionRequest(request: PermissionRequest?) {
-                super.onPermissionRequest(request)
+            override fun onPermissionRequest(request: PermissionRequest) {
+                runOnUiThread {
+                    if (request.resources.first() == PermissionRequest.RESOURCE_VIDEO_CAPTURE) {
+                        if (isCameraPermissionGranted()) {
+                            request.grant(request.resources)
+                        } else {
+                            requestCameraPermission()
+                        }
+                    } else {
+                        request.deny()
+                    }
+                }
             }
+        }
+    }
 
-            override fun onShowFileChooser(
-                webView: WebView?,
-                filePathCallback: ValueCallback<Array<Uri>>?,
-                fileChooserParams: FileChooserParams?
-            ): Boolean {
-                return super.onShowFileChooser(webView, filePathCallback, fileChooserParams)
+    private fun isCameraPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this@MainActivity,
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+            this@MainActivity,
+            arrayOf(android.Manifest.permission.CAMERA),
+            CAMERA_REQUEST_CODE
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            CAMERA_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() || grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(
+                        this, "Permission Granted", Toast.LENGTH_SHORT
+                    ).show()
+                    webView.reload()
+                } else {
+                    Toast.makeText(
+                        this, "Camera permission is required to use the camera.", Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
     }
@@ -72,7 +113,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private companion object {
-        // Replace with your website url
-        const val WEB_URL = "http://www.youtube.com"
+        // Replace with your own website url
+        const val WEB_URL = "https://www.youtube.com/"
+        const val CAMERA_REQUEST_CODE = 200
     }
 }
