@@ -2,24 +2,42 @@ package com.dev.olutoba.bridgefy
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.webkit.PermissionRequest
+import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.dev.olutoba.bridgefy.databinding.ActivityMainBinding
 
+/**
+ * Created by Onikoyi Damola Olutoba
+ * DATE: 27 May, 2024
+ * EMAIL: damexxey94@gmail.com
+ */
+
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
+
+    private var filePathCallback: ValueCallback<Array<Uri>>? = null
+    private val pickMedia =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let {
+                filePathCallback?.onReceiveValue(arrayOf(it))
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +83,16 @@ class MainActivity : AppCompatActivity() {
                         else -> request.deny()
                     }
                 }
+            }
+
+            override fun onShowFileChooser(
+                webView: WebView?,
+                filePathCallback: ValueCallback<Array<Uri>>?,
+                fileChooserParams: FileChooserParams?
+            ): Boolean {
+                this@MainActivity.filePathCallback = filePathCallback
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                return true
             }
         }
     }
@@ -116,7 +144,7 @@ class MainActivity : AppCompatActivity() {
 
     private companion object {
         // Replace with your own website url
-        const val WEB_URL = "https://www.youtube.com/"
+        const val WEB_URL = "https://www.youtube.com/results?search_query=sign+your+app+for+release+to+google+play"
         const val CAMERA_REQUEST_CODE = 200
     }
 }
