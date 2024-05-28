@@ -53,14 +53,16 @@ class MainActivity : AppCompatActivity() {
         webView.webChromeClient = object : WebChromeClient() {
             override fun onPermissionRequest(request: PermissionRequest) {
                 runOnUiThread {
-                    if (request.resources.first() == PermissionRequest.RESOURCE_VIDEO_CAPTURE) {
-                        if (isCameraPermissionGranted()) {
-                            request.grant(request.resources)
-                        } else {
-                            requestCameraPermission()
+                    when (request.resources.first()) {
+                        PermissionRequest.RESOURCE_VIDEO_CAPTURE -> {
+                            if (!isCameraPermissionGranted()) {
+                                requestCameraPermission()
+                            } else {
+                                request.grant(request.resources)
+                            }
                         }
-                    } else {
-                        request.deny()
+
+                        else -> request.deny()
                     }
                 }
             }
