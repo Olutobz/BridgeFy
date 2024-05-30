@@ -144,7 +144,8 @@ class MainActivity : AppCompatActivity() {
 
     private companion object {
         // Replace with your own website url
-        const val WEB_URL = "https://www.youtube.com/results?search_query=sign+your+app+for+release+to+google+play"
+        const val WEB_URL =
+            "https://www.youtube.com/results?search_query=sign+your+app+for+release+to+google+play"
         const val CAMERA_REQUEST_CODE = 200
     }
 }

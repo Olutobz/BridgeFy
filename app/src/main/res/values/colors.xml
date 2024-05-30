@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="my_light_primary">#00A859</color>
+    <color name="splash_screen_color">#499B93</color>
 </resources>
