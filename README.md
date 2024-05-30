@@ -1,10 +1,11 @@
 # Bridgefy
 
-Convert your PWA web app to an android app and upload to the Google Play Store.
+Convert your PWA web app to an Android app and upload it to the Google Play Store.
 
 ## ScreenRecord
 
-<img src="screenrecord/demo.mp4"  alt="ScreenRecord">
+https://github.com/Olutobz/BridgeFy/assets/37094821/8dc90adc-b48a-49e0-9261-1d5108a385a9
+
 
 ### License
 
