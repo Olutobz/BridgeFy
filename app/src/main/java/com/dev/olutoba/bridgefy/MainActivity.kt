@@ -73,10 +73,10 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     when (request.resources.first()) {
                         PermissionRequest.RESOURCE_VIDEO_CAPTURE -> {
-                            if (!isCameraPermissionGranted()) {
-                                requestCameraPermission()
-                            } else {
+                            if (isCameraPermissionGranted()) {
                                 request.grant(request.resources)
+                            } else {
+                                requestCameraPermission()
                             }
                         }
 
